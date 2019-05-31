@@ -1,6 +1,7 @@
 
 
 
+
 import sys, os, random
 from PyQt5 import QtCore, QtWidgets, QtGui
 from PyQt5.QtCore import *
@@ -10,17 +11,15 @@ from PyQt5.QtCore import Qt, QMimeData
 from PyQt5.QtGui import QIcon, QPixmap
 
 
+fileName_choose = ''
             
 class Photo_Button(QPushButton):
 
 
     def __init__(self, title, parent=None):
         super().__init__(title, parent)
-# =============================================================================
-#         icon  = QPixmap('dog.jpg')
-#         self.setIcon(icon)
-# =============================================================================
-        self.setIcon(QIcon('dog.jpg'))
+
+        self.setIcon(QIcon(fileName_choose))
         self.setIconSize(QSize(200,200))
 
 class Lower_Button(QPushButton):
@@ -151,13 +150,15 @@ class AppForm(QMainWindow):
     
     def add_Photo(self):
 
+        global fileName_choose
+        
         view = self.parent()
        
         
         fileName_choose, filetype = QFileDialog.getSaveFileName(self,
                                     "存檔")
 
-        f = open(fileName_choose,'w')
+        f = open(fileName_choose,'r')
         self.view.add_button()
 
     def create_menu(self):        
