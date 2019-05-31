@@ -1,22 +1,27 @@
-import sys, os, random, cv2, matplotlib
+
+
+
+import sys, os, random
 from PyQt5 import QtCore, QtWidgets, QtGui
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
-from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
-from matplotlib.backends.backend_qt5 import NavigationToolbar2QT as NavigationToolbar
-from matplotlib.figure import Figure
-from PyQt5.QtGui import QDrag
 from PyQt5.QtCore import Qt, QMimeData
-
+from PyQt5.QtGui import QIcon, QPixmap
 
 
             
-class Loop_Button(QPushButton):
+class Photo_Button(QPushButton):
 
-    
+
     def __init__(self, title, parent=None):
         super().__init__(title, parent)
+# =============================================================================
+#         icon  = QPixmap('dog.jpg')
+#         self.setIcon(icon)
+# =============================================================================
+        self.setIcon(QIcon('dog.jpg'))
+        self.setIconSize(QSize(200,200))
 
 class Lower_Button(QPushButton):
 
@@ -34,29 +39,17 @@ class View(QGraphicsView):
     
     
       
-# =============================================================================
-#     def add_Loop(self):
-# 
-#         global button_number
-#         global Loop_name
-#         Loop_name +=1
-#         button_number += 1
-#         
-#         self.button = Loop_Button('Loop', self)
-#         self.button.setStyleSheet("background-color: black")
-#         self.button.string = 'Loop'
-#         self.button.ExtremePoint = 1
-#         self.button.setGeometry(230, 80, 100, 30)
-#         self.button.position.setX(240)
-#         self.button.position.setY(30)
-#         self.button.setObjectName('%d' % button_number)
-#         button_name.append(self.button.objectName())
-#         buttonlist.append(self.button)
-# 
-# 
-#         self.button.show() 
-#     
-# =============================================================================
+    def add_button(self):
+
+        
+        self.button = Photo_Button('',self)
+
+        self.button.setGeometry(50, 40, 200, 200)
+
+
+
+        self.button.show() 
+    
     
  
     
@@ -83,7 +76,7 @@ class AppForm(QMainWindow):
 #         self.setStyleSheet(qss_file)
 # =============================================================================
         
-        self.setGeometry(200,100,800,600)
+        self.setGeometry(200,100,800,400)
         self.setAcceptDrops(True)
         self.create_menu()
         self.create_main_frame()
@@ -121,14 +114,15 @@ class AppForm(QMainWindow):
         self.choose_Button.setCheckable(True)
         self.choose_Button.setMaximumSize(60,30)
         
-        
+        self.button =  QPushButton("choose") 
         upper_grid = QGridLayout()
        
         upper_grid.addWidget(self.view,0,0,6,6)
         upper_grid.addWidget(self.cb,1,7)
         upper_grid.addWidget(self.warning_word,2,7)
         upper_grid.addWidget(self.choose_Button,4,7)
-        
+        upper_grid.addWidget(self.button,5,7)
+        self.button.clicked.connect(self.view.add_button)
         
 
         lower_grid = QGridLayout()
@@ -157,15 +151,14 @@ class AppForm(QMainWindow):
     
     def add_Photo(self):
 
-
+        view = self.parent()
        
         
         fileName_choose, filetype = QFileDialog.getSaveFileName(self,
-                                    "存檔",
-                                    "./",
-                                    "Text Files (*.txt)")
+                                    "存檔")
 
         f = open(fileName_choose,'w')
+        self.view.add_button()
 
     def create_menu(self):        
         menu = self.menuBar().addMenu('檔案')
