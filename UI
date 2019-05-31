@@ -1,0 +1,232 @@
+# -*- coding: utf-8 -*-
+"""
+Created on Fri May 31 20:08:36 2019
+
+@author: Hank
+"""
+
+#左邊多設一個按鈕，link
+
+#動態移動線 set widget
+
+#分割右上角格局
+
+#loop,Decision output初始設空
+#點及刪除縣
+#讀黨
+#Process 物件線重複問題
+
+# =============================================================================
+# from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
+# from matplotlib.backends.backend_qt5 import NavigationToolbar2QT as NavigationToolbar
+# from matplotlib.figure import Figure
+# =============================================================================
+
+import sys, os, random, cv2, matplotlib
+from PyQt5 import QtCore, QtWidgets, QtGui
+from PyQt5.QtCore import *
+from PyQt5.QtGui import *
+from PyQt5.QtWidgets import *
+from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
+from matplotlib.backends.backend_qt5 import NavigationToolbar2QT as NavigationToolbar
+from matplotlib.figure import Figure
+from PyQt5.QtGui import QDrag
+from PyQt5.QtCore import Qt, QMimeData
+import CompileList, SetModule, FrameworkDebugger
+import Parameter
+
+
+
+            
+class Loop_Button(QPushButton):
+
+    
+    def __init__(self, title, parent=None):
+        super().__init__(title, parent)
+        self.setContextMenuPolicy(Qt.CustomContextMenu)
+        self.customContextMenuRequested.connect(self.showMenu)
+
+
+        
+    def showMenu(self):
+        menu=QMenu()
+        menu2=QMenu()
+        menu2.addAction('Continue',self.T_Line)
+        menu2.addAction('End',self.F_Line)
+        menu.addAction('編輯', self.add_L)
+        
+        menu.exec_(self.cursor().pos())
+ 
+
+
+
+
+class View(QGraphicsView):
+    
+    
+      
+# =============================================================================
+#     def add_Loop(self):
+# 
+#         global button_number
+#         global Loop_name
+#         Loop_name +=1
+#         button_number += 1
+#         
+#         self.button = Loop_Button('Loop', self)
+#         self.button.setStyleSheet("background-color: black")
+#         self.button.string = 'Loop'
+#         self.button.ExtremePoint = 1
+#         self.button.setGeometry(230, 80, 100, 30)
+#         self.button.position.setX(240)
+#         self.button.position.setY(30)
+#         self.button.setObjectName('%d' % button_number)
+#         button_name.append(self.button.objectName())
+#         buttonlist.append(self.button)
+# 
+# 
+#         self.button.show() 
+#     
+# =============================================================================
+    
+ 
+    
+    def __init__(self, parent):
+        QGraphicsView.__init__(self, parent)
+        self.setScene(QGraphicsScene(self))
+        self.setSceneRect(QRectF(self.viewport().rect()))
+        
+
+    def mousePressEvent(self, event):
+        if can_draw == 1 :
+            self._start = event.pos()
+
+
+    def mouseReleaseEvent(self, event):
+        if can_draw == 1:
+            start = QPointF(self.mapToScene(self._start))
+            
+            end = self.mapToScene(event.pos())
+
+            self.scene().addItem(
+                QGraphicsLineItem(QLineF(start, end)))
+            
+            for point in (start, end):
+                text = self.scene().addSimpleText(
+                    '(%d, %d)' % (point.x(), point.y()))
+                
+                
+                text.setBrush(Qt.blue)
+                text.setPos(point)
+                
+    def dragEnterEvent(self, e):
+
+        e.accept()
+
+    def dragMoveEvent(self, e):
+        e.accept()
+
+    def dropEvent(self, e):
+
+        e.accept()
+
+
+
+            
+class AppForm(QMainWindow):
+    
+
+    
+    def __init__(self, parent=None):
+        QMainWindow.__init__(self, parent)
+        self.setWindowTitle('專題')
+        qss_file = open('style.qss').read()
+        self.setStyleSheet(qss_file)
+        
+        self.setGeometry(200,100,1000,600)
+        self.setAcceptDrops(True)
+# =============================================================================
+#         self.create_menu()
+# =============================================================================
+        self.create_main_frame()
+        
+        self.cwd = os.getcwd()
+        
+
+
+
+     
+    def on_about(self):
+        msg ="""
+        
+        *專題，加油。
+        """
+        QMessageBox.about(self, "簡介", msg.strip())
+    
+    def create_main_frame(self):
+        self.main_frame = QWidget()
+
+        self.dpi = 100
+        self.fig = Figure((5.0, 4.0), dpi=self.dpi)
+        self.canvas = FigureCanvas(self.fig)
+        self.canvas.setParent(self.main_frame)
+
+
+        hbox = QHBoxLayout()
+        Button_box = QVBoxLayout()
+        self.leftwidget = QWidget()
+        self.view = View(self)
+
+
+        self.cb = QCheckBox('警告訊息')
+        self.Waring_word =QTextEdit()
+        
+        self.Start_Button = QPushButton("Start")   
+        self.Start_Button.setCheckable(True)
+        self.Start_Button.clicked.connect(self.view.add_Start)
+
+
+        
+
+        Button_box.addWidget(self.Start_Button)
+        Button_box.setAlignment(w, Qt.AlignVCenter)
+        
+        
+        
+        
+        
+        hbox.addLayout(Button_box)
+        Hbox = QHBoxLayout()
+        second_vbox = QVBoxLayout()
+        
+
+        second_vbox.addWidget(self.view)
+        third_vbox = QVBoxLayout()
+        self.Result_Label = QLabel('Result')
+        third_vbox.addWidget(self.Result_Label)
+        third_vbox.addWidget(self.canvas)
+        third_vbox.addWidget(QLabel('Console',self))
+        third_vbox.addWidget(self.console)
+
+# =============================================================================
+#         Hbox.addWidget(self.leftwidget)
+# =============================================================================
+        Hbox.addLayout(hbox)
+        
+        Hbox.addLayout(second_vbox)
+        Hbox.addLayout(third_vbox)
+    
+        self.main_frame.setLayout(Hbox)
+        self.setCentralWidget(self.main_frame)
+    
+
+
+
+def main():
+    app = QApplication(sys.argv)
+    form = AppForm()
+    form.show()
+    sys.exit(app.exec_())
+
+if __name__ == "__main__":
+    main()
