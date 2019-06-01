@@ -21,6 +21,11 @@ from PyQt5.QtGui import QIcon, QPixmap
 
 
 
+def ine():
+    print("dfdfdfdffd")
+        
+
+
 class initialization_Button(QPushButton):
 
     
@@ -28,10 +33,11 @@ class initialization_Button(QPushButton):
         super().__init__(title, parent)
         self.setIcon(QIcon('icon.jpg'))
         self.setIconSize(QSize(200,200))
+        self.clicked.connect(AppForm().add_Photo)
+            
         
-        AppForm = self.parent()
-        self.clicked.connect(self.add_button)
         
+
 
 
 
@@ -81,7 +87,9 @@ class Lower_Button(QPushButton):
 
 
 
-
+class file():
+    def file1():
+        print("232333")
             
 class AppForm(QMainWindow):
     
@@ -119,9 +127,9 @@ class AppForm(QMainWindow):
 
 
 
-        hbox = QHBoxLayout()
+
         finalbox = QVBoxLayout()
-        self.leftwidget = QWidget()
+
 # =============================================================================
 #         self.view = View(self)
 # =============================================================================
@@ -204,8 +212,7 @@ class AppForm(QMainWindow):
         
         about_action = self.menuBar().addAction('介紹')
         about_action.triggered.connect(self.on_about)
-       
-
+    
     def add_button(self):
         global photo_column
         global photo_row
