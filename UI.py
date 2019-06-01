@@ -1,5 +1,12 @@
 
 
+# -*- coding: utf-8 -*-
+"""
+Created on Sat Jun  1 11:57:06 2019
+
+@author: Administrator
+"""
+
 
 
 
@@ -13,14 +20,46 @@ from PyQt5.QtCore import Qt, QMimeData
 from PyQt5.QtGui import QIcon, QPixmap
 
 
+
+class initialization_Button(QPushButton):
+
+    
+    def __init__(self, title, parent=None):
+        super().__init__(title, parent)
+        self.setIcon(QIcon('icon.jpg'))
+        self.setIconSize(QSize(200,200))
+        
+        AppForm = self.parent()
+        self.clicked.connect(self.add_button)
+        
+
+
+
 fileName_choose = ''
+
+
+
 photo_space = QGroupBox("Grid layout")
+
 layout = QGridLayout()
 photo_space.setMinimumSize(600,400)
 layout.setSpacing(10) 
 layout.setColumnStretch(1, 10)
-layout.setWidget(self.button,0,0)
+
+initialize_button = initialization_Button('')
+layout.addWidget(initialize_button,0,0)
+
+
+photo_column = 0
+photo_row = -1
+
+
 photo_space.setLayout(layout)
+
+
+
+
+
 
 
 class Photo_Button(QPushButton):
@@ -61,7 +100,6 @@ class AppForm(QMainWindow):
         self.create_menu()
         self.create_main_frame()
         
-        self.cwd = os.getcwd()
         
 
 
@@ -97,7 +135,7 @@ class AppForm(QMainWindow):
         self.warning_word =QTextEdit()
         self.warning_word.setMaximumSize(400,40)
         
-        self.choose_Button = QPushButton("choose")   
+        self.choose_Button = QPushButton("選擇")   
         self.choose_Button.setCheckable(True)
         self.choose_Button.setMaximumSize(60,30)
         
@@ -138,6 +176,14 @@ class AppForm(QMainWindow):
         self.main_frame.setLayout(finalbox)
         self.setCentralWidget(self.main_frame)
     
+    def other_file(self):
+    
+        fileName_choose, filetype = QFileDialog.getSaveFileName(self,
+                                    "")
+
+        f = open(fileName_choose,'r')
+        
+        
     def add_Photo(self):
 
         global fileName_choose
@@ -145,7 +191,7 @@ class AppForm(QMainWindow):
        
         
         fileName_choose, filetype = QFileDialog.getSaveFileName(self,
-                                    "存檔")
+                                    "新增圖片")
 
         f = open(fileName_choose,'r')
         self.add_button()
@@ -161,16 +207,28 @@ class AppForm(QMainWindow):
        
 
     def add_button(self):
-
+        global photo_column
+        global photo_row
         
+        photo_row +=1
+        
+        if photo_row == 3:
+            photo_row =0
+            photo_column+=1
+        
+        print(photo_column)
+        print(photo_row)
+            
         self.button = Photo_Button('')
         
         self.button.setGeometry(50, 40, 200, 200)
         
-        layout.addWidget(self.button,0,0)
+        layout.addWidget(self.button,photo_column,photo_row)
 
 
-        self.button.show() 
+# =============================================================================
+#         self.button.show() 
+# =============================================================================
 
 def main():
     app = QApplication(sys.argv)
