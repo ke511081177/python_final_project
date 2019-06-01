@@ -2,6 +2,8 @@
 
 
 
+
+
 import sys, os, random
 from PyQt5 import QtCore, QtWidgets, QtGui
 from PyQt5.QtCore import *
@@ -12,13 +14,23 @@ from PyQt5.QtGui import QIcon, QPixmap
 
 
 fileName_choose = ''
-            
+photo_space = QGroupBox("Grid layout")
+layout = QGridLayout()
+photo_space.setMinimumSize(600,400)
+layout.setSpacing(10) 
+layout.setColumnStretch(1, 10)
+layout.setWidget(self.button,0,0)
+photo_space.setLayout(layout)
+
+
 class Photo_Button(QPushButton):
 
 
     def __init__(self, title, parent=None):
         super().__init__(title, parent)
-
+        
+        
+        self.AppForm = self.parent()
         self.setIcon(QIcon(fileName_choose))
         self.setIconSize(QSize(200,200))
 
@@ -27,37 +39,6 @@ class Lower_Button(QPushButton):
     
     def __init__(self, title, parent=None):
         super().__init__(title, parent)
-
-
-
-
-
-
-
-class View(QGraphicsView):
-    
-    
-      
-    def add_button(self):
-
-        
-        self.button = Photo_Button('',self)
-
-        self.button.setGeometry(50, 40, 200, 200)
-
-
-
-        self.button.show() 
-    
-    
- 
-    
-    def __init__(self, parent):
-        QGraphicsView.__init__(self, parent)
-        self.setScene(QGraphicsScene(self))
-        self.setSceneRect(QRectF(self.viewport().rect()))
-        self.setFixedSize(600, 400)
-
 
 
 
@@ -99,10 +80,17 @@ class AppForm(QMainWindow):
 
 
 
+
         hbox = QHBoxLayout()
         finalbox = QVBoxLayout()
         self.leftwidget = QWidget()
-        self.view = View(self)
+# =============================================================================
+#         self.view = View(self)
+# =============================================================================
+
+
+
+
 
 
         self.cb = QCheckBox('警告訊息')
@@ -116,13 +104,15 @@ class AppForm(QMainWindow):
         self.button =  QPushButton("choose") 
         upper_grid = QGridLayout()
        
-        upper_grid.addWidget(self.view,0,0,6,6)
+        upper_grid.addWidget(photo_space,0,0,6,6)
         upper_grid.addWidget(self.cb,1,7)
         upper_grid.addWidget(self.warning_word,2,7)
         upper_grid.addWidget(self.choose_Button,4,7)
         upper_grid.addWidget(self.button,5,7)
-        self.button.clicked.connect(self.view.add_button)
+        self.button.clicked.connect(self.add_button)
         
+        
+
 
         lower_grid = QGridLayout()
         self.preset_button = Lower_Button('預設',self)
@@ -152,14 +142,13 @@ class AppForm(QMainWindow):
 
         global fileName_choose
         
-        view = self.parent()
        
         
         fileName_choose, filetype = QFileDialog.getSaveFileName(self,
                                     "存檔")
 
         f = open(fileName_choose,'r')
-        self.view.add_button()
+        self.add_button()
 
     def create_menu(self):        
         menu = self.menuBar().addMenu('檔案')
@@ -171,6 +160,17 @@ class AppForm(QMainWindow):
         about_action.triggered.connect(self.on_about)
        
 
+    def add_button(self):
+
+        
+        self.button = Photo_Button('')
+        
+        self.button.setGeometry(50, 40, 200, 200)
+        
+        layout.addWidget(self.button,0,0)
+
+
+        self.button.show() 
 
 def main():
     app = QApplication(sys.argv)
