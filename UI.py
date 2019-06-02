@@ -1,6 +1,5 @@
 
 
-
 import sys, os, random
 from PyQt5 import QtCore, QtWidgets, QtGui
 from PyQt5.QtCore import *
@@ -31,6 +30,11 @@ class initialization_Button(QPushButton):
         fileName_choose, filetype = QFileDialog.getSaveFileName(self,
                                     "新增圖片")
 
+        if fileName_choose == "":
+
+            print("\n取消存檔")
+            return
+        
         f = open(fileName_choose,'r')
         self.add_button()
         
@@ -64,7 +68,7 @@ class initialization_Button(QPushButton):
 
 
 fileName_choose = ''
-
+sw_choose = ''
 
 
 photo_space = QGroupBox("請輸入你要警示對象的圖片")
@@ -161,8 +165,8 @@ class AppForm(QMainWindow):
         接著便離開了。
         """
         QMessageBox.about(self, "簡介", msg.strip())
-    def a(self,name):
-        print(name)
+    def a(self):
+        print('sdsd')
         
     def create_main_frame(self):
         
@@ -187,7 +191,9 @@ class AppForm(QMainWindow):
         word_action = QtWidgets.QToolButton(self, text="Word", checkable=True)
         excel_action = QtWidgets.QToolButton(self, text="Excel", checkable=True)
         other_action = QtWidgets.QToolButton(self, text="其他程式", checkable=True)
-
+        
+        other_action.toggled.connect(self.other_file)
+        
         group = QtWidgets.QButtonGroup(self, exclusive=True)
 
         for button in (
@@ -212,6 +218,10 @@ class AppForm(QMainWindow):
         self.warning_word.setReadOnly(True)
         self.warning_word.setStyleSheet("background-color: gray")
         
+        self.file_word = QTextEdit()
+        self.file_word.setMaximumSize(400,80)
+        self.file_word.setReadOnly(True)
+        
         self.choose_Button = QPushButton("選擇")  
         self.choose_label = QLabel('開啟程式')
         self.choose_Button.setCheckable(True)
@@ -222,12 +232,14 @@ class AppForm(QMainWindow):
         
 
         upper_grid = QGridLayout()
-       
+        
         upper_grid.addWidget(photo_space,0,0,6,6)
         upper_grid.addWidget(cb,1,7)
         upper_grid.addWidget(self.warning_word,2,7)
         upper_grid.addWidget(self.choose_label,3,7)
+        upper_grid.addWidget(self.file_word,4,7)
         upper_grid.addWidget(toolbarBox,5,7)
+        
 
         
 
@@ -292,14 +304,13 @@ class AppForm(QMainWindow):
         
     
     def other_file(self):
-    
-        fileName_choose, filetype = QFileDialog.getSaveFileName(self,
+        
+        sw_choose, sw_type = QFileDialog.getSaveFileName(self,
                                     "其他程式")
 
-        f = open(fileName_choose,'r')
+        f = open(sw_choose,'r')
         
-        
-
+        self.file_word.setText(sw_choose)
 
     def create_menu(self):        
      
