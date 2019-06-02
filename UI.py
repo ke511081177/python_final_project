@@ -10,7 +10,9 @@ from PyQt5.QtCore import Qt, QMimeData
 from PyQt5.QtGui import QIcon, QPixmap
 
 
-actions = []
+
+
+
 
 class initialization_Button(QPushButton):
     
@@ -25,7 +27,6 @@ class initialization_Button(QPushButton):
 
         global fileName_choose
         
-        print("!!!!!!!!!!!!!!!!!!!!!!!!!!!")
         
         fileName_choose, filetype = QFileDialog.getSaveFileName(self,
                                     "新增圖片")
@@ -119,13 +120,11 @@ class AppForm(QMainWindow):
     def __init__(self, parent=None):
         QMainWindow.__init__(self, parent)
         self.setWindowTitle('老闆來啦')
-# =============================================================================
-#         qss_file = open('style.qss').read()
-#         self.setStyleSheet(qss_file)
-# =============================================================================
+        qss_file = open('darkstyle.qss').read()
+        self.setStyleSheet(qss_file)
         
         self.setGeometry(200,100,800,400)
-        self.setAcceptDrops(True)
+
         self.create_menu()
         self.create_main_frame()
         
@@ -157,7 +156,9 @@ class AppForm(QMainWindow):
 
         阿嬤激動地說：我的金孫不見了，你有看到他嗎？
 
-        湖中女神說：哎呀，你太貪心了唷。（接著離去。
+        湖中女神說：哎呀，你太貪心了唷。
+        
+        接著便離開了。
         """
         QMessageBox.about(self, "簡介", msg.strip())
     def a(self,name):
@@ -170,41 +171,42 @@ class AppForm(QMainWindow):
         self.main_frame = QWidget()
 
 
-
+        cb = QCheckBox(self,text="警告訊息", checkable=True)
 
         finalbox = QVBoxLayout()
 
 
-
+        
         toolbarBox = QToolBar('開啟程式~~~~~~~~~',self)
         toolbarBox.setFixedWidth(180)
         
-        self.addToolBar(QtCore.Qt.RightToolBarArea, toolbarBox)
+        self.addToolBar(QtCore.Qt.LeftToolBarArea, toolbarBox)
         
-        vscode_action = toolbarBox.addAction('VSCode')
-        ptt_action = toolbarBox.addAction('Ppt')
-        word_action = toolbarBox.addAction('Word')
-        excel_action = toolbarBox.addAction('Excel')
-        other_action = toolbarBox.addAction('其他程式')
-        
-        
-        i = 0
-        for w in [vscode_action,ptt_action,word_action,
-                  excel_action,other_action]:
-            i+=1    
-            w.setCheckable(True)
-            w.name = i
-            actions.append(w.sender)
-        
-        for w in [vscode_action,ptt_action,word_action,
-                  excel_action,other_action]:
-            w.triggered.connect(self.toolbar_check)
-            
- 
+        vscode_action = QtWidgets.QToolButton(self, text="VSCode", checkable=True)
+        ppt_action = QtWidgets.QToolButton(self, text="PPt", checkable=True)
+        word_action = QtWidgets.QToolButton(self, text="Word", checkable=True)
+        excel_action = QtWidgets.QToolButton(self, text="Excel", checkable=True)
+        other_action = QtWidgets.QToolButton(self, text="其他程式", checkable=True)
+
+        group = QtWidgets.QButtonGroup(self, exclusive=True)
+
+        for button in (
+            vscode_action,
+            ppt_action,
+            word_action,
+            excel_action,
+            other_action,
+        ):
+            toolbarBox.addWidget(button)
+            group.addButton(button)
+
+    
 
 
-        self.cb = QCheckBox('警告訊息')
-        self.cb.stateChanged.connect(self.cb_check)
+        group.addButton(cb)
+        cb.stateChanged.connect(self.cb_check)
+
+        
         self.warning_word =QTextEdit()
         self.warning_word.setMaximumSize(400,40)
         self.warning_word.setReadOnly(True)
@@ -222,7 +224,7 @@ class AppForm(QMainWindow):
         upper_grid = QGridLayout()
        
         upper_grid.addWidget(photo_space,0,0,6,6)
-        upper_grid.addWidget(self.cb,1,7)
+        upper_grid.addWidget(cb,1,7)
         upper_grid.addWidget(self.warning_word,2,7)
         upper_grid.addWidget(self.choose_label,3,7)
         upper_grid.addWidget(toolbarBox,5,7)
@@ -236,10 +238,10 @@ class AppForm(QMainWindow):
         self.ok_button = Lower_Button('儲存',self)
                 
         
-        lower_grid.setSpacing(4)
-        lower_grid.addWidget(self.preset_button,1,0)
+        lower_grid.setSpacing(0)
+        lower_grid.addWidget(self.preset_button,1,20)
         lower_grid.addWidget(self.cancel_button,1,1)
-        lower_grid.addWidget(self.ok_button,1,2)
+        lower_grid.addWidget(self.ok_button,1,22)
         
         
         
@@ -254,52 +256,40 @@ class AppForm(QMainWindow):
         self.main_frame.setLayout(finalbox)
         self.setCentralWidget(self.main_frame)
     
-    def toolbar_check(self,a):
-        global actions
-        
-        print(self.sender())
-        print(self.sender().isChecked())
-        if self.sender().isChecked():
-            for w in actions:
-                if w() != self.sender():
-                    w().setCheckable(False)
-                    
-        if self.sender().isChecked():
-            for w in actions:
-                w().setCheckable(True)
 
-# =============================================================================
-#         if self.sender().isChecked():
-# =============================================================================
-            
-
-# =============================================================================
-#         if self.isChecked():
-#             for w in actions:
-#                 if self.name != w:
-#                     setCheckable(False)
-# =============================================================================
-# =============================================================================
-#         if self..isChecked():
-#             self.warning_word.setReadOnly(False)
-#           
-#             
-#         else:
-#             self.warning_word.setReadOnly(True)
-# =============================================================================
-          
     
     def cb_check(self,a):
         
         print(a)
-        if self.cb.isChecked():
+        if a == 2:
             self.warning_word.setReadOnly(False)
             self.warning_word.setStyleSheet("background-color: white")
             
+# =============================================================================
+#             for action in (
+#             self.vscode_action,
+#             self.ptt_action,
+#             self.word_action,
+#             self.excel_action,
+#             self.other_action,
+#         ):
+#                 action.setCheckable(False)
+# =============================================================================
         else:
             self.warning_word.setReadOnly(True)
             self.warning_word.setStyleSheet("background-color: gray")
-
+# =============================================================================
+#             for action in (
+#             self.vscode_action,
+#             self.ptt_action,
+#             self.word_action,
+#             self.excel_action,
+#             self.other_action,
+#         ):
+#                 action.setCheckable(True)
+# =============================================================================
+        
+        
     
     def other_file(self):
     
